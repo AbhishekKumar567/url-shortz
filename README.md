@@ -1,5 +1,5 @@
 
-# URL Shortener (Express + Static HTML)
+# URL Shortener (Express + Static HTML + Prisma)
 
 Features:
 - Create short links (with optional custom code)
