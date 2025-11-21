@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/styles.css">
+  <title>URL Shortener</title>
+</head>
+<body>
+<div class="container">
+  <h2>Create Short Link</h2>
+
+  <input id="url" placeholder="Enter long URL (must start with http:// or https://)">
+  <input id="custom" placeholder="Custom short code (optional)">
+  <button onclick="create()">Create</button>
+
+  <p id="result"></p>
+  <a href="/dashboard.html">Go to Dashboard</a>
+</div>
+
+<script>
+async function create() {
+  const url = document.getElementById("url").value;
+  const custom = document.getElementById("custom").value;
+
+  const res = await fetch("/api/shorten", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url, customCode: custom })
+  });
+
+  const data = await res.json();
+
+  if (data.error) {
+    document.getElementById("result").innerText = data.error;
+  } else {
+    document.getElementById("result").innerHTML = `
+      <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>
+    `;
+  }
+}
+</script>
+
+
+</body>
+</html>

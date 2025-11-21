@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/styles.css">
+  <title>Dashboard</title>
+</head>
+<body>
+<div class="container">
+  <h2>Dashboard</h2>
+
+  <div style="margin-bottom: 10px;">
+    <a href="/index.html">Add New</a> |
+    <a href="/healthz" target="_blank">Healthcheck</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Short URL</th>
+        <th>Code</th>
+        <th>Target URL</th>
+        <th>Clicks</th>
+        <th>Last Clicked</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<script>
+async function load() {
+  const res = await fetch("/api/links");
+  const data = await res.json();
+
+  document.getElementById("tbody").innerHTML = data.map(x => `
+    <tr>
+      <td>
+        <a href="/${x.shortCode}" target="_blank">
+          ${window.location.origin}/${x.shortCode}
+        </a>
+      </td>
+      <td>
+        <a href="/code/${x.shortCode}">
+          ${x.shortCode}
+        </a>
+      </td>
+      <td title="${x.original}">
+        ${x.original}
+      </td>
+      <td>${x.clicks}</td>
+      <td>${x.lastClicked ? new Date(x.lastClicked).toLocaleString() : '-'}</td>
+      <td>
+        <button class="delete" onclick="del('${x.shortCode}')">X</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+async function del(code) {
+  if (!confirm("Delete this link?")) return;
+
+  await fetch("/api/delete/" + code, { method: "DELETE" });
+  load();
+}
+
+load();
+</script>
+
+</body>
+</html>

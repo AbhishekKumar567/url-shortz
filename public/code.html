@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="/styles.css">
+<title>Stats</title>
+</head>
+<body>
+<div class="container">
+<h2>Link Stats</h2>
+<div id="info"></div>
+<a href="/dashboard.html">Back</a>
+</div>
+
+<script>
+const code = window.location.pathname.split("/").pop();
+
+async function load() {
+  const res = await fetch("/api/stats/" + code);
+  const x = await res.json();
+
+  if (x.error) {
+    document.getElementById("info").innerText = "Not found";
+    return;
+  }
+
+  document.getElementById("info").innerHTML = `
+    <p><b>Short Code:</b> ${x.shortCode}</p>
+    <p><b>Original URL:</b> ${x.original}</p>
+    <p><b>Total Clicks:</b> ${x.clicks}</p>
+    <p><b>Last Clicked:</b> ${x.lastClicked ? new Date(x.lastClicked).toLocaleString() : "-"}</p>
+  `;
+}
+
+load();
+</script>
+
+</body>
+</html>
